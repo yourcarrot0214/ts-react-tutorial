@@ -2,16 +2,27 @@ import React from "react";
 
 type GreetingsProps = {
   name: string;
-  mark?: string;
+  mark: string;
+  onClick: (name: string) => void;
 };
 
-const Greetings: React.FC<GreetingsProps> = ({ name, mark }) => {
+function Greetings({ name, mark, onClick }: GreetingsProps) {
+  const buttonClick = () => onClick(name);
   return (
-    <div>
-      Helo, {name}
-      {mark}
-    </div>
+    <>
+      <div>
+        Helo, {name}
+        {mark}
+      </div>
+      <div>
+        <button onClick={buttonClick}>Click Me</button>
+      </div>
+    </>
   );
+}
+
+Greetings.defaultProps = {
+  mark: "!",
 };
 
 export default Greetings;
@@ -23,5 +34,4 @@ export default Greetings;
 
   다만 defaultProps가 제대로 동작하지 않는다는 단점이 있다.
   defaultProps를 비구조화 할당 단계에서 사용해야 에러가 발생하지 않는다.
-  - 레거시가 된 부분일 수 있으니 코드 테스트 할 것.
 */
