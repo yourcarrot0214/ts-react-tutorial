@@ -4,6 +4,7 @@ import "./App.css";
 // import Counter from "./Counter";
 // import MyForm from "./MyForm";
 import ReducerSample from "./ReducerSample";
+import { SampleProvider } from "./SampleContext";
 
 function App() {
   // const handleButton = (name: string) => console.log(name);
@@ -15,7 +16,9 @@ function App() {
       {/* <Greetings name='carrot' onClick={handleButton} /> */}
       {/* <Counter /> */}
       {/* <MyForm onSubmit={onSubmit} /> */}
-      <ReducerSample />
+      <SampleProvider>
+        <ReducerSample />
+      </SampleProvider>
     </div>
   );
 }
