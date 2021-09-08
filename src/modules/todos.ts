@@ -7,6 +7,8 @@
   6. reducer 함수 선언
 */
 
+import { ActionType, createReducer, createAction } from "typesafe-actions";
+
 // 1. action type 선언
 const ADD_TODO = "todos/ADD_TODO" as const;
 const TOGGLE_TODO = "todos/TOGGLE_TODO" as const;
@@ -23,21 +25,12 @@ export const addTodo = (text: string) => ({
   },
 });
 
-export const toggleTodo = (id: number) => ({
-  type: TOGGLE_TODO,
-  payload: id,
-});
-
-export const removeTodo = (id: number) => ({
-  type: REMOVE_TODO,
-  payload: id,
-});
+export const toggleTodo = createAction(TOGGLE_TODO)<number>();
+export const removeTodo = createAction(REMOVE_TODO)<number>();
 
 // 3. action 객체들에 대한 타입 선언
-type TodosAction =
-  | ReturnType<typeof addTodo>
-  | ReturnType<typeof toggleTodo>
-  | ReturnType<typeof removeTodo>;
+const actions = { addTodo, toggleTodo, removeTodo };
+type TodosAction = ActionType<typeof actions>;
 
 // 4. redux state 타입 선언
 export type Todo = {
@@ -52,26 +45,37 @@ type TodosState = Todo[];
 const initialState: TodosState = [];
 
 // 6. reducer
-function todos(
-  state: TodosState = initialState,
-  action: TodosAction
-): TodosState {
-  switch (action.type) {
-    case ADD_TODO:
-      return state.concat({
-        id: action.payload.id,
-        text: action.payload.text,
-        done: false,
-      });
-    case TOGGLE_TODO:
-      return state.map((todo) =>
-        todo.id === action.payload ? { ...todo, done: !todo.done } : todo
-      );
-    case REMOVE_TODO:
-      return state.filter((todo) => todo.id !== action.payload);
-    default:
-      return state;
-  }
-}
+// function todos(
+//   state: TodosState = initialState,
+//   action: TodosAction
+// ): TodosState {
+//   switch (action.type) {
+//     case ADD_TODO:
+//       return state.concat({
+//         id: action.payload.id,
+//         text: action.payload.text,
+//         done: false,
+//       });
+//     case TOGGLE_TODO:
+//       return state.map((todo) =>
+//         todo.id === action.payload ? { ...todo, done: !todo.done } : todo
+//       );
+//     case REMOVE_TODO:
+//       return state.filter((todo) => todo.id !== action.payload);
+//     default:
+//       return state;
+//   }
+// }
+
+const todos = createReducer<TodosState, TodosAction>(initialState, {
+  [ADD_TODO]: (state, action) =>
+    state.concat({ ...action.payload, done: false }),
+  [TOGGLE_TODO]: (state, action) =>
+    state.map((todo) =>
+      todo.id === action.payload ? { ...todo, done: !todo.done } : todo
+    ),
+  [REMOVE_TODO]: (state, action) =>
+    state.filter((todo) => todo.id !== action.payload),
+});
 
 export default todos;
